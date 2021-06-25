@@ -2,34 +2,21 @@
 
 namespace Spatie\CollectionMacros\Test;
 
-use Mockery;
-use Orchestra\Testbench\TestCase as Orchestra;
+use PHPUnit\Framework\TestCase as BaseTestCase;
+use ReflectionClass;
 use Spatie\CollectionMacros\CollectionMacroServiceProvider;
 
-abstract class TestCase extends Orchestra
+abstract class TestCase extends BaseTestCase
 {
-    /** @var \Mockery\MockInterface spy */
-    public $spy;
-
-    public function setUp()
+    protected function setUp(): void
     {
-        parent::setUp();
-
-        $this->spy = Mockery::spy();
+        $this->createDummyprovider()->register();
     }
 
-    public function tearDown()
+    protected function createDummyprovider(): CollectionMacroServiceProvider
     {
-        Mockery::close();
-    }
+        $reflectionClass = new ReflectionClass(CollectionMacroServiceProvider::class);
 
-    protected function getPackageProviders($app)
-    {
-        return [CollectionMacroServiceProvider::class];
-    }
-
-    public function avoidTestMarkedAsRisky()
-    {
-        $this->assertTrue(true);
+        return $reflectionClass->newInstanceWithoutConstructor();
     }
 }
